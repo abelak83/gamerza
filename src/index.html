@@ -138,6 +138,43 @@
       </div>
     </footer>
 
+    <section class="overlay" id="overlay" aria-hidden="true">
+      <div class="overlay__content" role="dialog" aria-modal="true" aria-labelledby="overlayTitle">
+        <div class="overlay__header">
+          <div>
+            <p class="label" id="overlayTag">Смена</p>
+            <h2 id="overlayTitle">Сценарий смены</h2>
+          </div>
+          <button class="ghost" id="closeOverlay">Закрыть</button>
+        </div>
+        <div class="overlay__body">
+          <div class="overlay__column">
+            <h3>Текущая обстановка</h3>
+            <ul class="panel-list" id="overlayStatus">
+              <li>Норма: все линии в работе.</li>
+            </ul>
+            <div class="panel-card">
+              <p class="label">Сигналы</p>
+              <p class="strong" id="overlaySignals">U=10.2 кВ, f=50.0 Гц</p>
+              <p class="muted" id="overlayHint">Ожидайте предаварийные признаки.</p>
+            </div>
+          </div>
+          <div class="overlay__column">
+            <h3>Действия диспетчера</h3>
+            <div class="overlay__actions">
+              <button class="primary" id="applyAction">Применить решение</button>
+              <button class="ghost" id="pauseAction">Пауза / шаг</button>
+              <button class="ghost" id="rollbackAction">Откат в контрольную точку</button>
+            </div>
+            <div class="overlay__feed">
+              <p class="label">Лог смены</p>
+              <ol id="overlayLog"></ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <div class="toast" id="toast" aria-live="polite"></div>
     <script src="app.js"></script>
   </body>

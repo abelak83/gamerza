@@ -13,13 +13,44 @@ const glossaryList = document.getElementById("glossaryList");
 const startShift = document.getElementById("startShift");
 const openTrainer = document.getElementById("openTrainer");
 const filterButtons = document.querySelectorAll(".filter-bar button");
+const overlay = document.getElementById("overlay");
+const overlayTag = document.getElementById("overlayTag");
+const overlayTitle = document.getElementById("overlayTitle");
+const overlayStatus = document.getElementById("overlayStatus");
+const overlaySignals = document.getElementById("overlaySignals");
+const overlayHint = document.getElementById("overlayHint");
+const overlayLog = document.getElementById("overlayLog");
+const closeOverlay = document.getElementById("closeOverlay");
+const applyAction = document.getElementById("applyAction");
+const pauseAction = document.getElementById("pauseAction");
+const rollbackAction = document.getElementById("rollbackAction");
 
 let missions = [];
+let logEntries = [];
 
 const showToast = (message) => {
   toast.textContent = message;
   toast.classList.add("show");
   window.setTimeout(() => toast.classList.remove("show"), 2200);
+};
+
+const addLogEntry = (entry) => {
+  logEntries = [entry, ...logEntries].slice(0, 6);
+  overlayLog.innerHTML = logEntries.map((item) => `<li>${item}</li>`).join("");
+};
+
+const setOverlayStatus = (items) => {
+  overlayStatus.innerHTML = items.map((item) => `<li>${item}</li>`).join("");
+};
+
+const openOverlay = () => {
+  overlay.classList.add("show");
+  overlay.setAttribute("aria-hidden", "false");
+};
+
+const closeOverlayView = () => {
+  overlay.classList.remove("show");
+  overlay.setAttribute("aria-hidden", "true");
 };
 
 const renderMissions = (filter = "all") => {
@@ -96,11 +127,33 @@ const loadData = async () => {
 };
 
 startShift.addEventListener("click", () => {
-  showToast("Смена началась: отслеживайте сигнализацию и KPI.");
+  overlayTag.textContent = "Смена";
+  overlayTitle.textContent = "Сценарий смены: АВР и АПВ";
+  setOverlayStatus([
+    "Предаварийный признак: рост тока на фидере №3.",
+    "В резерве доступен источник №2.",
+    "Критические потребители: узел 1 и 4."
+  ]);
+  overlaySignals.textContent = "U=10.1 кВ, I=420 А, f=49.9 Гц";
+  overlayHint.textContent = "Оцените устойчивость повреждения перед включением АПВ.";
+  logEntries = [];
+  addLogEntry("Смена началась. Проверьте уставки АПВ и готовность резерва.");
+  openOverlay();
 });
 
 openTrainer.addEventListener("click", () => {
-  showToast("Тренажёр сигналов готов: серия из 10 быстрых кейсов.");
+  overlayTag.textContent = "Тренажёр";
+  overlayTitle.textContent = "Сигналы: аналоговые и дискретные";
+  setOverlayStatus([
+    "Серия из 10 быстрых кейсов.",
+    "Подсказка доступна после 3 ошибок.",
+    "Комбо увеличивает очки надёжности."
+  ]);
+  overlaySignals.textContent = "U(t) — синус, дискретный лог — импульсы.";
+  overlayHint.textContent = "Выберите тип сигнала и ключевой параметр.";
+  logEntries = [];
+  addLogEntry("Тренажёр готов. Первый кейс: выделите аналоговый сигнал.");
+  openOverlay();
 });
 
 difficultySelect.addEventListener("change", (event) => {
@@ -115,6 +168,21 @@ filterButtons.forEach((button) => {
     button.classList.add("active");
     renderMissions(button.dataset.filter);
   });
+});
+
+closeOverlay.addEventListener("click", closeOverlayView);
+
+applyAction.addEventListener("click", () => {
+  addLogEntry("Принято решение: включить АВР, АПВ оставить в ожидании.");
+  showToast("Решение применено. KPI пересчитаны.");
+});
+
+pauseAction.addEventListener("click", () => {
+  addLogEntry("Шаг симуляции: событие подтверждено, состояние обновлено.");
+});
+
+rollbackAction.addEventListener("click", () => {
+  addLogEntry("Откат к контрольной точке. Настройки автоматики сброшены.");
 });
 
 loadData().catch(() => {
