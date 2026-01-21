@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Диспетчер РЗА — обучающая игра</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero__content">
+        <p class="badge">Учебный симулятор РЗА</p>
+        <h1>Диспетчер РЗА</h1>
+        <p class="subtitle">
+          Короткие смены по 10–25 минут, реальные сценарии аварий и мета-прогрессия, чтобы закреплять навыки
+          диспетчеризации и релейной защиты.
+        </p>
+        <div class="hero__actions">
+          <button class="primary" id="startShift">Начать смену</button>
+          <button class="ghost" id="openTrainer">Тренажёр сигналов</button>
+        </div>
+        <div class="hero__stats">
+          <div>
+            <span class="stat">25+</span>
+            <span class="label">миссий кампании</span>
+          </div>
+          <div>
+            <span class="stat">3</span>
+            <span class="label">режима сложности</span>
+          </div>
+          <div>
+            <span class="stat">5</span>
+            <span class="label">функций автоматики</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero__panel">
+        <h2>Панель диспетчера</h2>
+        <ul class="panel-list">
+          <li>Карта сети (однолинейка)</li>
+          <li>Тренды аналоговых сигналов</li>
+          <li>Лог дискретных событий</li>
+          <li>Модули АПВ / АВР / АЧР</li>
+          <li>Дебрифинг и подсказки</li>
+        </ul>
+        <div class="panel-card">
+          <p class="label">Текущая смена</p>
+          <p class="strong">Стабильный режим, 3 предупреждения</p>
+          <p class="muted">Следите за падением частоты в узле №4</p>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="section" id="gameLoop">
+        <div class="section__header">
+          <h2>Игровой цикл</h2>
+          <p>От предаварийного признака до разбора полётов — всё в рамках одной смены.</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <h3>Сигналы и топология</h3>
+            <p>Читайте аналоговые тренды, дискретные события и состояние однолинейки.</p>
+          </article>
+          <article class="card">
+            <h3>Выбор действий</h3>
+            <p>Настраивайте АПВ/АВР/АЧР, управляйте переключениями и приоритетами.</p>
+          </article>
+          <article class="card">
+            <h3>Симуляция последствий</h3>
+            <p>Система реагирует, а KPI фиксируют качество режима и ущерб.</p>
+          </article>
+          <article class="card">
+            <h3>Дебрифинг</h3>
+            <p>Короткие правила и разбор цепочки событий укрепляют знания.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="difficulty">
+        <div class="section__header">
+          <h2>Сложность и обучающая подача</h2>
+          <p>Уровень влияет на шум, дискретизацию и количество подсказок.</p>
+        </div>
+        <div class="difficulty">
+          <label>
+            Режим:
+            <select id="difficultySelect">
+              <option value="novice">Новичок</option>
+              <option value="engineer">Инженер</option>
+              <option value="expert">Эксперт</option>
+            </select>
+          </label>
+          <div class="pill" id="difficultyHint">Подсказки доступны после каждого события.</div>
+        </div>
+      </section>
+
+      <section class="section" id="missions">
+        <div class="section__header">
+          <h2>Миссии кампании</h2>
+          <p>Данные загружаются из JSON и формируют банк инцидентов.</p>
+        </div>
+        <div class="filter-bar">
+          <button class="ghost active" data-filter="all">Все</button>
+          <button class="ghost" data-filter="A">Блок A — схемы</button>
+          <button class="ghost" data-filter="B">Блок B — АПВ/АВР</button>
+          <button class="ghost" data-filter="C">Блок C — частота</button>
+          <button class="ghost" data-filter="D">Блок D — сигналы</button>
+        </div>
+        <div class="mission-grid" id="missionGrid"></div>
+      </section>
+
+      <section class="section" id="modules">
+        <div class="section__header">
+          <h2>Модули автоматики</h2>
+          <p>Соберите билд автоматики и учитывайте побочные эффекты.</p>
+        </div>
+        <div class="module-grid" id="moduleGrid"></div>
+      </section>
+
+      <section class="section" id="glossary">
+        <div class="section__header">
+          <h2>Глоссарий</h2>
+          <p>Короткие определения появляются после ситуаций и в дебрифинге.</p>
+        </div>
+        <div class="glossary" id="glossaryList"></div>
+      </section>
+    </main>
+
+    <footer>
+      <div>
+        <p class="label">Метапрогрессия</p>
+        <p class="strong">Стажёр → Инженер → Ведущий → Главный диспетчер</p>
+      </div>
+      <div>
+        <p class="label">Очки надёжности</p>
+        <p class="strong">Открывают новые схемы, сценарии и модули</p>
+      </div>
+    </footer>
+
+    <section class="overlay" id="overlay" aria-hidden="true">
+      <div class="overlay__content" role="dialog" aria-modal="true" aria-labelledby="overlayTitle">
+        <div class="overlay__header">
+          <div>
+            <p class="label" id="overlayTag">Смена</p>
+            <h2 id="overlayTitle">Сценарий смены</h2>
+          </div>
+          <button class="ghost" id="closeOverlay">Закрыть</button>
+        </div>
+        <div class="overlay__body">
+          <div class="overlay__column">
+            <h3>Текущая обстановка</h3>
+            <ul class="panel-list" id="overlayStatus">
+              <li>Норма: все линии в работе.</li>
+            </ul>
+            <div class="panel-card">
+              <p class="label">Сигналы</p>
+              <p class="strong" id="overlaySignals">U=10.2 кВ, f=50.0 Гц</p>
+              <p class="muted" id="overlayHint">Ожидайте предаварийные признаки.</p>
+            </div>
+          </div>
+          <div class="overlay__column">
+            <h3>Действия диспетчера</h3>
+            <div class="overlay__actions">
+              <button class="primary" id="applyAction">Применить решение</button>
+              <button class="ghost" id="pauseAction">Пауза / шаг</button>
+              <button class="ghost" id="rollbackAction">Откат в контрольную точку</button>
+            </div>
+            <div class="overlay__feed">
+              <p class="label">Лог смены</p>
+              <ol id="overlayLog"></ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="toast" id="toast" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
